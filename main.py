@@ -98,13 +98,13 @@ def sort_product_revenue():
             "val": True
         },
         2: {
-            "display": "Từ thấp xuống cao",
+            "display": "Từ thấp lên cao",
             "val": False
         }
     }
     # hiển thị lựa chọn
     print("\nSắp xếp doanh thu hàng hóa")
-    for i in range(1, len(sort)+1):
+    for i in range(1, len(sort) + 1):
         print("{}. {}".format(i, sort[i]["display"]))
     print("0. Quay lại")
     _choice = enter_type_number("Nhập lựa chọn(1-2) (0 để quay lại): ")
@@ -113,7 +113,7 @@ def sort_product_revenue():
         print()
         _reverse = sort[_choice]["val"]
         # sắp xếp doanh thu
-        _table_data = ManageProduct.ManageProduct().sort_product_revenue(_reverse)
+        _table_data = manageProduct.sort_product_revenue(_reverse)
 
         # hiển thị doanh thu theo tên
         for i in range(len(_table_data)):
@@ -121,6 +121,7 @@ def sort_product_revenue():
                 name=_table_data[i][0],
                 revenue=_table_data[i][1]
             ))
+        print()
 
 
 # Thống kê doanh thu theo ngày của cửa hàng
@@ -132,11 +133,10 @@ def store_revenue():
 
 # Thống kê top hàng hóa có doanh thu cao nhất, doanh thu thấp nhất
 def listed_highest_and_lowest_product_revenue():
-    _manager = ManageProduct.ManageProduct()
     # 5 doanh thu cao nhat
-    _highest = _manager.listed_highest_product_revenue()
+    _highest = manageProduct.listed_highest_product_revenue()
     # 5 doanh thu thap nhat
-    _lowest = _manager.listed_lowest_product_revenue()
+    _lowest = manageProduct.listed_lowest_product_revenue()
 
     # hien thi doanh thu theo ten
     print("\n5 sản phẩm doanh thu cao nhất:")
@@ -156,7 +156,11 @@ def listed_highest_and_lowest_product_revenue():
 
 # Hiển thị hàng hóa sắp hết hạn
 def product_nearly_expire():
-    pass
+    _data_audit = manageProduct.audit_expiry_product()
+    print("\nDanh sách sản phẩm sắp hết hạn:")
+    for product in _data_audit:
+        print(product)
+    print()
 
 
 # Bán hàng
@@ -217,3 +221,4 @@ if __name__ == '__main__':
     choice = enter_funtion_selection()
     while choice != 0:
         func[choice]["exe"]()
+        choice = enter_funtion_selection()

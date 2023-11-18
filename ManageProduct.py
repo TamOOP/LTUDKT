@@ -22,6 +22,14 @@ def get_revenue(product):
     return product[1]
 
 
+def remaining_date(date_entry):
+    day, month, year = map(int, date_entry.split('-'))
+    today = datetime.date.today()
+    future = datetime.date(year, month, day)
+    diff = future - today
+    return diff.days
+
+
 class ManageProduct:
     products, receipts = [], []
 
@@ -72,17 +80,17 @@ class ManageProduct:
     # Sắp xếp tổng doanh thu từng mặt hàng(Dựa vào lựa chọn của người dùng: cao xuống thấp hay thấp lên cao)
     def sort_product_revenue(self, reverse: bool):
         _data_revenues = []
-        for _product in self.products:
+        for product in self.products:
             _total = 0
             # duyet hoa don mua hang
-            for _receipt in self.receipts:
-                _list_order_product = _receipt.get_list_product()
+            for receipt in self.receipts:
+                _list_order_product = receipt.get_list_product()
                 for order_product in _list_order_product:
-                    if order_product.get_pid() == _product.get_pid():
+                    if order_product.get_pid() == product.get_pid():
                         _total += order_product.get_total_amount()
 
             # luu ten mat hang va tong doanh thu
-            _product_revenue = [_product.get_product_name(), _total]
+            _product_revenue = [product.get_product_name(), _total]
             _data_revenues.append(_product_revenue)
 
         # sap xep theo tong doanh thu
@@ -107,7 +115,24 @@ class ManageProduct:
     # Tổng hợp những hàng hóa đang có trong cửa hàng mà sắp hết hạn sử dụng (hạn sử
     # dụng còn 6 tuần) rồi tính giá mới cho các mặt hàng đó: hàng có hạn sử dụng từ 3
     # tuần giảm 23.5%, hàng có hạn sử dụng dưới 3 tuần giảm 56.9%.
-    pass
+    def audit_expiry_product(self):
+        _data_audit = []
+        for product in self.products:
+            expire_date = product.get_expiration_date()
+            remain_date = remaining_date(expire_date)
+
+            if remain_date > 6 * 7: continue
+            _data_audit.append(product)
+
+            if remain_date >= 3 * 7:
+                promotion = 23.5 / 100
+            else:
+                promotion = 56.9 / 100
+
+            promotion_price = product.get_product_price() * promotion
+            product.set_product_price(int(promotion_price))
+
+        return _data_audit
 
     # Thêm mới hóa đơn
     pass
