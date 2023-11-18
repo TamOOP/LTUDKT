@@ -24,6 +24,21 @@ class Product:
         return (f"{self.pid}. {self.product_name} {self.product_price}đ {self.quantity} "
                 f"{self.production_date} {self.expiration_date}")
 
+    def sua_thong_tin(self, product_name_moi: str, product_price_moi: int, product_cost_moi: int, quantity_moi: int,
+                      production_date_moi: datetime, expiration_date_moi: datetime):
+        # string
+        self.product_name = product_name_moi
+        # number, giá bán
+        self.product_price = product_price_moi
+        # number, giá nhập
+        self.product_cost = product_cost_moi
+        # number, số lượng
+        self.quantity = quantity_moi
+        # class datetime.date, NSX
+        self.production_date = production_date_moi
+        # class datetime.date, HSD
+        self.expiration_date = expiration_date_moi
+
     def get_pid(self):
         return self.pid
 

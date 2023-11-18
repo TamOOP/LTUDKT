@@ -39,20 +39,51 @@ def get_revenue(product):
 
 
 class ManageProduct:
+    products, receipts = [], []
+
     # Thêm mới hàng hóa
-    pass
+    def them_moi_hang_hoa(self, product):
+        self.products.append(product)
 
     # Tìm kiếm hàng hóa
-    pass
+    def tim_kiem_hang_hoa(self, pid):
+        ket_qua = []
+        for product in self.products:
+            if product.pid == pid:
+                ket_qua.append(product)
+                return ket_qua
+            else:
+                print("Không tìm thấy ID hàng hóa nào có ID này.")
+        return None
 
     # Sửa thông tin hàng hóa
-    pass
+    def sua_thong_tin_hang_hoa(self, pid):
+        try:
+            product = self.tim_kiem_hang_hoa(pid)
+
+            if product is not None:
+                # print("Thông tin hàng hóa cần sửa:")
+                # print(product)
+
+                product_name = input("Nhập tên hàng hóa mới (Nhấn Enter để giữ nguyên): ")
+                product_price = int(input("Nhập giá bán mới (Nhấn Enter để giữ nguyên): "))
+                product_cost = int(input("Nhập giá nhập mới (Nhấn Enter để giữ nguyên): "))
+                quantity = int(input("Nhập số lượng mới (Nhấn Enter để giữ nguyên): "))
+                production_date = datetime(input("Nhập ngày sản xuất mới (Nhấn Enter để giữ nguyên): "))
+                expiration_date = datetime(input("Nhập hạn sử dụng mới (Nhấn Enter để giữ nguyên): "))
+
+                Models.Product.sua_thong_tin(product_name, product_price, product_cost, quantity,
+                                             production_date, expiration_date)
+                print(f"Đã sửa thông tin hàng hóa có mã {pid}")
+            else:
+                print(f"Không tìm thấy hàng hóa có mã {pid}")
+        except ValueError:
+            print("Lỗi: Dữ liệu không hợp lệ")
 
     # Sắp xếp tổng doanh thu từng mặt hàng(Dựa vào lựa chọn của người dùng: cao xuống thấp hay thấp lên cao)
-    @staticmethod
-    def sort_product_revenue(reverse: bool):
+    def sort_product_revenue(self, reverse: bool):
         _data_revenues = []
-        for _product in products:
+        for _product in self.products:
             _product_revenue = [_product.get_product_name(), product_revenue(_product.get_pid())]
             _data_revenues.append(_product_revenue)
 
@@ -85,7 +116,34 @@ class ManageProduct:
     pass
 
     # Hiển thị danh sách hàng hóa
-    pass
+    def hien_thi_danh_sach(self):
+        for product in self.products:
+            ManageProduct.hien_thi_thong_tin(product)
+
+    @staticmethod
+    def hien_thi_thong_tin(product):
+        print(f"ID hàng hóa: {product.pid}")
+        print(f"Tên hàng hóa: {product.product_name}")
+        print(f"Giá bán hàng hóa: {product.product_price}")
+        print(f"Giá nhập hàng hóa: {product.product_cost}")
+        print(f"Số lượng: {product.quantity}")
+        print(f"Ngày sản xuất: {product.production_date}")
+        print(f"Hạn sử dụng: {product.expiration_date}")
+
+    def thong_ke_doanh_thu_theo_ngay(self):
+        doanh_thu_theo_ngay = {}
+        for receipt in self.receipts:
+            ngay_xuat = receipt.date_create
+            if ngay_xuat not in doanh_thu_theo_ngay:
+                doanh_thu_theo_ngay[ngay_xuat] = 0
+            doanh_thu_theo_ngay[ngay_xuat] += receipt.total
+        return doanh_thu_theo_ngay
 
     # Xóa hàng hóa
-    pass
+    def xoa_hang_hoa(self, pid):
+        for product in self.products:
+            if product.pid == pid:
+                self.products.remove(pid)
+                print(f"Hàng hóa có mã {pid} đã được xóa.")
+                return
+        print(f"Không tìm thấy hàng hóa có mã {pid}.")

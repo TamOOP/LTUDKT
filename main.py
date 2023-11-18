@@ -1,7 +1,8 @@
-import math
 import datetime
 import Models
 import ManageProduct
+
+manageProduct = ManageProduct.ManageProduct()
 
 
 # Nhập dữ liệu kiểu số
@@ -50,17 +51,42 @@ def enter_funtion_selection():
 
 # Thêm mới hàng hóa
 def add_new_product():
-    pass
+    try:
+        pid = enter_type_number("Nhập mã hàng hóa: ")
+        product_name = input("Nhập tên hàng hóa: ")
+        product_price = enter_type_number("Nhập giá bán: ")
+        product_cost = enter_type_number("Nhập giá nhập: ")
+        quantity = enter_type_number("Nhập số lượng: ")
+        production_date = enter_type_date("Nhập ngày sản xuất: ")
+        expiration_date = enter_type_date("Nhập hạn sử dụng: ")
+        new_product = Models.Product(pid, product_name, product_price, product_cost, quantity, production_date,
+                                     expiration_date)
+        manageProduct.them_moi_hang_hoa(new_product)
+    except ValueError:
+        print("Lỗi: Dữ liệu không hợp lệ.")
 
 
 # Tìm kiếm hàng hóa
 def search_product():
-    pass
+    try:
+        pid_can_tim = enter_type_number("Nhập mã ID hàng hóa cần tìm: ")
+        ket_qua_tim_kiem = manageProduct.tim_kiem_hang_hoa(pid_can_tim)
+        if not ket_qua_tim_kiem:
+            print("Không tìm thấy ID hàng hóa nào có ID này.")
+        else:
+            for product in ket_qua_tim_kiem:
+                manageProduct.hien_thi_thong_tin(product)
+    except ValueError:
+        print("Lỗi: Dữ liệu không hợp lệ")
 
 
 # Sửa thông tin hàng hóa
 def show_all_product():
-    pass
+    try:
+        pid = enter_type_number("Nhập mã hàng hóa cần sửa thông tin: ")
+        manageProduct.sua_thong_tin_hang_hoa(pid)
+    except ValueError:
+        print("Lỗi: Dữ liệu không hợp lệ")
 
 
 # Sắp xếp theo doanh thu hàng hóa ( cao xuống thấp, thấp lên cao )
@@ -99,7 +125,9 @@ def sort_product_revenue():
 
 # Thống kê doanh thu theo ngày của cửa hàng
 def store_revenue():
-    pass
+    doanh_thu_theo_ngay = manageProduct.thong_ke_doanh_thu_theo_ngay()
+    for ngay, doanh_thu in doanh_thu_theo_ngay.items():
+        print(f"Doanh thu ngày {ngay}: {doanh_thu}")
 
 
 # Thống kê top hàng hóa có doanh thu cao nhất, doanh thu thấp nhất
@@ -138,7 +166,11 @@ def order():
 
 # Xóa hàng hóa
 def delete_product():
-    pass
+    try:
+        id_hang_hoa_can_xoa = enter_type_number("Nhập ID hàng hóa cần xóa: ")
+        manageProduct.xoa_hang_hoa(id_hang_hoa_can_xoa)
+    except ValueError:
+        print("Lỗi: Dữ liệu không hợp lệ")
 
 
 if __name__ == '__main__':
