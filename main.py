@@ -3,7 +3,6 @@ import datetime
 import Models
 import ManageProduct
 
-
 # Nhập dữ liệu kiểu số
 def enter_type_number(msg):
     while True:
@@ -45,8 +44,9 @@ def enter_funtion_selection():
         print("Không hợp lệ")
         choice = enter_type_number(msg_choice)
 
-    if choice != 0:
-        func[choice]["exe"]()
+    ZZZZ
+
+    return choice
 
 
 # Thêm mới hàng hóa
@@ -56,7 +56,6 @@ def add_new_product():
 
 # Tìm kiếm hàng hóa
 def search_product():
-
     pass
 
 
@@ -66,8 +65,12 @@ def show_all_product():
 
 
 # Sắp xếp theo doanh thu hàng hóa ( cao xuống thấp, thấp lên cao )
+# _reverse: True => cao xuống thấp, False => thấp lên cao
 def sort_product_revenue():
-    pass
+    _reverse = False
+    _table_date = ManageProduct.ManageProduct().sort_product_revenue(_reverse)
+    for row in _table_date:
+        print('| {:>10} | {:^10}'.format(*row))
 
 
 # Thống kê doanh thu theo ngày của cửa hàng
