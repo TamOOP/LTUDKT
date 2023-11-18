@@ -1,37 +1,21 @@
 import Models
 import datetime
 
-# lưu thông tin sản phẩm và hóa đơn
-products, receipts = [], []
+# data sản phẩm
 p1 = Models.Product(1, "product_demo", 20000, 8000, 10,
                     "18-11-2023", "1-12-2023")
 p2 = Models.Product(2, "product_demo2product_demo2", 15000, 12000, 15,
                     "18-11-2023", "1-12-2023")
-products.append(p1)
-products.append(p2)
 
-# mua sản phẩm
+# data sản phẩm được mua
 op1 = Models.OrderProduct(p1.get_pid(), p1.get_product_name(), 4, p1.get_product_price(),
                           4 * p1.get_product_price())
 op2 = Models.OrderProduct(p2.get_pid(), p2.get_product_name(), 2, p2.get_product_price(),
                           2 * p2.get_product_price())
 
-# tạo và lưu hóa đơn
+# data hóa đơn
 r1 = Models.Receipt(1, datetime.datetime.now().strftime('%d-%m-%Y'), [op1],
                     int(op1.get_product_price()) * int(op1.get_order_quantity()))
-receipts.append(r1)
-
-
-# tổng doanh thu 1 mặt hàng
-def product_revenue(pid: int) -> int:
-    _total = 0
-    for _receipt in receipts:
-        _list_order_product = _receipt.get_list_product()
-        for _order_product in _list_order_product:
-            if _order_product.get_pid() == pid:
-                _total += _order_product.get_total_amount()
-
-    return _total
 
 
 def get_revenue(product):
@@ -40,6 +24,11 @@ def get_revenue(product):
 
 class ManageProduct:
     products, receipts = [], []
+
+    def __init__(self):
+        self.products.append(p1)
+        self.products.append(p2)
+        self.receipts.append(r1)
 
     # Thêm mới hàng hóa
     def them_moi_hang_hoa(self, product):
@@ -59,22 +48,22 @@ class ManageProduct:
     # Sửa thông tin hàng hóa
     def sua_thong_tin_hang_hoa(self, pid):
         try:
-            product = self.tim_kiem_hang_hoa(pid)
+            products = self.tim_kiem_hang_hoa(pid)
 
-            if product is not None:
+            if products is not None:
                 # print("Thông tin hàng hóa cần sửa:")
                 # print(product)
+                for product in products:
+                    product_name = input("Nhập tên hàng hóa mới (Nhấn Enter để giữ nguyên): ")
+                    product_price = int(input("Nhập giá bán mới (Nhấn Enter để giữ nguyên): "))
+                    product_cost = int(input("Nhập giá nhập mới (Nhấn Enter để giữ nguyên): "))
+                    quantity = int(input("Nhập số lượng mới (Nhấn Enter để giữ nguyên): "))
+                    production_date = datetime(input("Nhập ngày sản xuất mới (Nhấn Enter để giữ nguyên): "))
+                    expiration_date = datetime(input("Nhập hạn sử dụng mới (Nhấn Enter để giữ nguyên): "))
 
-                product_name = input("Nhập tên hàng hóa mới (Nhấn Enter để giữ nguyên): ")
-                product_price = int(input("Nhập giá bán mới (Nhấn Enter để giữ nguyên): "))
-                product_cost = int(input("Nhập giá nhập mới (Nhấn Enter để giữ nguyên): "))
-                quantity = int(input("Nhập số lượng mới (Nhấn Enter để giữ nguyên): "))
-                production_date = datetime(input("Nhập ngày sản xuất mới (Nhấn Enter để giữ nguyên): "))
-                expiration_date = datetime(input("Nhập hạn sử dụng mới (Nhấn Enter để giữ nguyên): "))
-
-                Models.Product.sua_thong_tin(product_name, product_price, product_cost, quantity,
-                                             production_date, expiration_date)
-                print(f"Đã sửa thông tin hàng hóa có mã {pid}")
+                    product.sua_thong_tin(product_name, product_price, product_cost, quantity,
+                                          production_date, expiration_date)
+                    print(f"Đã sửa thông tin hàng hóa có mã {pid}")
             else:
                 print(f"Không tìm thấy hàng hóa có mã {pid}")
         except ValueError:
@@ -84,9 +73,19 @@ class ManageProduct:
     def sort_product_revenue(self, reverse: bool):
         _data_revenues = []
         for _product in self.products:
-            _product_revenue = [_product.get_product_name(), product_revenue(_product.get_pid())]
+            _total = 0
+            # duyet hoa don mua hang
+            for _receipt in self.receipts:
+                _list_order_product = _receipt.get_list_product()
+                for order_product in _list_order_product:
+                    if order_product.get_pid() == _product.get_pid():
+                        _total += order_product.get_total_amount()
+
+            # luu ten mat hang va tong doanh thu
+            _product_revenue = [_product.get_product_name(), _total]
             _data_revenues.append(_product_revenue)
 
+        # sap xep theo tong doanh thu
         _data_revenues.sort(key=get_revenue, reverse=reverse)
         return _data_revenues
 
@@ -97,14 +96,12 @@ class ManageProduct:
     pass
 
     # Hiển thị 5 mặt hàng có tổng doanh thu cao nhất, 5 mặt hàng có tổng doanh thu thấp nhất.
-    @staticmethod
-    def listed_highest_product_revenue():
-        _data_revenues = ManageProduct.sort_product_revenue(True)
+    def listed_highest_product_revenue(self):
+        _data_revenues = ManageProduct.sort_product_revenue(self, True)
         return _data_revenues[:5]
 
-    @staticmethod
-    def listed_lowest_product_revenue():
-        _data_revenues = ManageProduct.sort_product_revenue(False)
+    def listed_lowest_product_revenue(self):
+        _data_revenues = ManageProduct.sort_product_revenue(self, False)
         return _data_revenues[:5]
 
     # Tổng hợp những hàng hóa đang có trong cửa hàng mà sắp hết hạn sử dụng (hạn sử
