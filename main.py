@@ -3,6 +3,7 @@ import datetime
 import Models
 import ManageProduct
 
+
 # Nhập dữ liệu kiểu số
 def enter_type_number(msg):
     while True:
@@ -45,7 +46,6 @@ def enter_funtion_selection():
         _choice = enter_type_number(msg_choice)
 
     return _choice
-
 
 
 # Thêm mới hàng hóa
