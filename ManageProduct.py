@@ -57,7 +57,6 @@ class ManageProduct:
             _data_revenues.append(_product_revenue)
 
         _data_revenues.sort(key=get_revenue, reverse=reverse)
-        _data_revenues.insert(0, ["Tên mặt hàng", "Doanh thu"])
         return _data_revenues
 
     # Tính tổng doanh thu theo ngày từng mặt hàng
@@ -69,13 +68,13 @@ class ManageProduct:
     # Hiển thị 5 mặt hàng có tổng doanh thu cao nhất, 5 mặt hàng có tổng doanh thu thấp nhất.
     @staticmethod
     def listed_highest_product_revenue():
-        _revenues = ManageProduct.sort_product_revenue(False)
-        return _revenues[:5]
+        _data_revenues = ManageProduct.sort_product_revenue(True)
+        return _data_revenues[:5]
 
     @staticmethod
     def listed_lowest_product_revenue():
-        _revenues = ManageProduct.sort_product_revenue(True)
-        return _revenues[:5]
+        _data_revenues = ManageProduct.sort_product_revenue(False)
+        return _data_revenues[:5]
 
     # Tổng hợp những hàng hóa đang có trong cửa hàng mà sắp hết hạn sử dụng (hạn sử
     # dụng còn 6 tuần) rồi tính giá mới cho các mặt hàng đó: hàng có hạn sử dụng từ 3
