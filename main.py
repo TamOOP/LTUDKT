@@ -39,13 +39,13 @@ def enter_funtion_selection():
         func="Thoát chương trình"
     ))
 
-    choice = enter_type_number(msg_choice)
-    while choice < 0 or choice > len(func):
+    _choice = enter_type_number(msg_choice)
+    while _choice < 0 or _choice > len(func):
         print("Không hợp lệ")
-        choice = enter_type_number(msg_choice)
+        _choice = enter_type_number(msg_choice)
 
-    if choice != 0:
-        func[choice]["exe"]()
+    return _choice
+
 
 
 # Thêm mới hàng hóa
@@ -182,4 +182,6 @@ if __name__ == '__main__':
     }
 
     msg_choice = "Chọn chức năng (1- {}) (0 để thoát): ".format(len(func))
-    enter_funtion_selection()
+    choice = enter_funtion_selection()
+    while choice != 0:
+        func[choice]["exe"]()
