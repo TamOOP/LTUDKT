@@ -140,6 +140,9 @@ class Receipt:
     def get_rid(self):
         return self.rid
 
+    def get_receipt_id(self):
+        return self.rid
+
     def get_date_create(self):
         return self.date_create
 

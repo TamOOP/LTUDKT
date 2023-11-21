@@ -126,10 +126,17 @@ def sort_product_revenue():
 
 # Thống kê doanh thu theo ngày của cửa hàng
 def store_revenue():
-    doanh_thu_theo_ngay = manageProduct.thong_ke_doanh_thu_theo_ngay()
+    # Gọi phương thức và lưu kết quả vào biến
+    doanh_thu_theo_ngay, doanh_thu_tung_mat_hang = manageProduct.total_revenue_per_day_per_product()
+
+    # Hiển thị tổng doanh thu theo ngày
     for ngay, doanh_thu in doanh_thu_theo_ngay.items():
         print(f"Doanh thu ngày {ngay}: {doanh_thu}")
 
+    # Duyệt qua các mặt hàng và hiển thị doanh thu
+    for pid, ngay_doanh_thu in doanh_thu_tung_mat_hang.items():
+        for ngay, doanh_thu in ngay_doanh_thu.items():
+            print(f"Doanh thu ngày {ngay} cho sản phẩm có mã {pid}: {doanh_thu}")
 
 # Thống kê top hàng hóa có doanh thu cao nhất, doanh thu thấp nhất
 def listed_highest_and_lowest_product_revenue():
@@ -165,7 +172,38 @@ def product_nearly_expire():
 
 # Bán hàng
 def order():
-    pass
+    try:
+        # Lấy thông tin chi tiết hóa đơn từ người dùng
+        receipt_id = enter_type_number("Nhập mã hóa đơn: ")
+        date_create = datetime.date.today()
+
+        # Nhập thông tin các sản phẩm trong hóa đơn
+        list_order_products = []
+        while True:
+            pid = enter_type_number("Nhập mã sản phẩm: ")
+            quantity = enter_type_number("Nhập số lượng: ")
+
+            # Tìm sản phẩm trong danh sách sản phẩm
+            products = manageProduct.tim_kiem_hang_hoa(pid)
+
+            if products:
+                product = products[0]
+                total_amount = quantity * product.get_product_price()
+                list_order_products.append(Models.OrderProduct(pid, product.get_product_name(), quantity,
+                                                               product.get_product_price(), total_amount))
+            else:
+                print(f"Không tìm thấy sản phẩm có mã {pid}")
+
+            add_more = input("Thêm sản phẩm khác? (y/n): ")
+            if add_more.lower() != 'y':
+                break
+
+        # Tạo đối tượng hóa đơn và thêm vào danh sách hóa đơn
+        new_receipt = Models.Receipt(receipt_id, date_create.strftime('%d-%m-%Y'), list_order_products,
+                                     sum(op.get_total_amount() for op in list_order_products))
+        manageProduct.them_moi_hoa_don(new_receipt)
+    except ValueError:
+        print("Lỗi: Dữ liệu không hợp lệ.")
 
 
 # Xóa hàng hóa
@@ -196,7 +234,7 @@ if __name__ == '__main__':
             "exe": sort_product_revenue
         },
         5: {
-            "display": "Thống kê doanh thu theo ngày của cửa hàng",
+            "display": "Thống kê doanh thu theo ngày và theo mặt hàng của cửa hàng",
             "exe": store_revenue
         },
         6: {
@@ -214,7 +252,7 @@ if __name__ == '__main__':
         9: {
             "display": "Xóa hàng hóa",
             "exe": delete_product
-        }
+        },
     }
 
     msg_choice = "Chọn chức năng (1- {}) (0 để thoát): ".format(len(func))

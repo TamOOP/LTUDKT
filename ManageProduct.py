@@ -98,7 +98,31 @@ class ManageProduct:
         return _data_revenues
 
     # Tính tổng doanh thu theo ngày từng mặt hàng
-    pass
+    def total_revenue_per_day_per_product(self):
+        doanh_thu_theo_ngay = {}
+        doanh_thu_tung_mat_hang = {}
+
+        for receipt in self.receipts:
+            ngay_xuat = receipt.date_create
+
+            for order_product in receipt.get_list_product():
+                pid = order_product.get_pid()
+                total_amount = order_product.get_total_amount()
+
+                # Tổng doanh thu theo ngày cho cửa hàng
+                if ngay_xuat not in doanh_thu_theo_ngay:
+                    doanh_thu_theo_ngay[ngay_xuat] = 0
+                doanh_thu_theo_ngay[ngay_xuat] += total_amount
+
+                # Tổng doanh thu theo ngày từng mặt hàng
+                if pid not in doanh_thu_tung_mat_hang:
+                    doanh_thu_tung_mat_hang[pid] = {}
+                if ngay_xuat not in doanh_thu_tung_mat_hang[pid]:
+                    doanh_thu_tung_mat_hang[pid][ngay_xuat] = 0
+                doanh_thu_tung_mat_hang[pid][ngay_xuat] += total_amount
+
+        return doanh_thu_theo_ngay, doanh_thu_tung_mat_hang
+
 
     # Tính tổng doanh thu theo ngày của cửa hàng(theo tháng, năm)
     pass
@@ -135,7 +159,9 @@ class ManageProduct:
         return _data_audit
 
     # Thêm mới hóa đơn
-    pass
+    def them_moi_hoa_don(self, receipt):
+        self.receipts.append(receipt)
+        print(f"Hóa đơn có mã {receipt.get_receipt_id()} đã được thêm mới.")
 
     # Hiển thị danh sách hàng hóa
     def hien_thi_danh_sach(self):
